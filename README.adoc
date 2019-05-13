@@ -8,5 +8,6 @@ Using msys64 the bin path can be /mnt/c/bin, mnt/d/bin etc etc
 In our example it is /mnt/v/bin
 ....
     $: cd /mnt/v/bin
-    $: wget https://github.com/eiconDinRDuino/DinRDuino_Boards/raw/master/Stm32AddVariant
+    $: wget https://github.com/eiconDinRDuino/CreateProject/raw/master/createproject
 ....
+Your /mnt/v/bin now has createproject installed
