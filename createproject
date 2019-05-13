@@ -1,0 +1,116 @@
+#!/bin/bash
+#    CreateProject
+#    Bash script which creates a Template for a new project
+#    command line example   = CreateProject Eicon DRD_Silo8 F427ZI
+#    "CreateProject"        = Name of the Command
+#    "Eicon"                = Name of the Board Manufacturer
+#    "DRD_Silo8"            = Name of the DinRDuino board series
+#    "F427ZI"               = Abreviated name of the Stm32 CPU the full name being STM32F427ZIT6
+#    "STM32F427ZIT6"        = IC MCU 32BIT 2MB FLASH 144LQF
+#    "STM32F427ZIT6"        = STM32 = ST Micro, F = Device, 427 = series, Z = 144 Pins, I = 2048 KB Mem, T = LQFP, 6 = Temp = -40 to 85*C.
+
+GITHUB_USER_NAME=noeldiviney
+GITHUB_ORGS_NAME=eiconDinRDuino
+PROJECT_NAME=$2
+echo "PROJECT_NAME = $PROJECT_NAME"
+BOARD_MANUFACTURER=$1
+echo "BOARD_MANUFACTURER = $BOARD_MANUFACTURER"
+BOARD_SERIES="$(cut -d'_' -f1 <<<"$PROJECT_NAME")"
+echo "BOARD_SERIES = $BOARD_SERIES"
+BOARD_APP="$(cut -d'_' -f2 <<<"$PROJECT_NAME")"
+echo "BOARD_APP = $BOARD_APP"
+CPU_TYPE="$(cut -d'_' -f3 <<<"$PROJECT_NAME")"
+echo "CPU_TYPE = $CPU_TYPE"
+CPU_DEVICE=${CPU_TYPE:0:4}
+echo "CPU_DEVICE = $CPU_DEVICE"
+CPU_FAMILY=${CPU_TYPE:0:2}
+echo "CPU_FAMILY = $CPU_FAMILY"
+CPU_PINS=${CPU_TYPE:4:1}
+echo "CPU_PINS = $CPU_PINS"
+CPU_MEM=${CPU_TYPE:5:1}
+echo "CPU_MEM = $CPU_MEM"
+XX=xx
+echo "XX = $XX"
+BOARD_TYPE=STM32$CPU_DEVICE$XX
+echo "BOARD_TYPE = $BOARD_TYPE"
+MCU_FAMILY=STM32$CPU_DEVICE$XX
+echo "MCU_FAMILY = $MCU_FAMILY"
+MCU_LINE=STM32$CPU_DEVICE$XX
+echo "MCU_LINE = $MCU_LINE"
+echo "Starting test script"
+mkdir $PROJECT_NAME
+cd $PROJECT_NAME
+echo "GITHUB_USER_NAME = $GITHUB_USER_NAME"
+echo "GITHUB_ORGS_NAME = $GITHUB_ORGS_NAME"
+echo "PROJECT_NAME = $PROJECT_NAME"
+echo "BOARD_MANUFACTURER = $BOARD_MANUFACTURER"
+echo "BOARD_SERIES = $BOARD_SERIES"
+echo "CPU_DEVICE = $CPU_DEVICE"
+echo "CPU_PINS = $CPU_PINS"
+echo "CPU_MEM = $CPU_MEM"
+echo "Creating $PROJECT_NAME project"
+git init
+
+wget https://github.com/eiconDinRDuino/CMakeArduino-F427ZI/raw/master/project-templ.tar.bz2
+tar -xvjf project-templ.tar.bz2
+mv 
+echo "Create CMakeLists.txt"
+#exit
+
+#cat <<'EOF' > CMakeLists.txt
+touch CMakeLists.txt
+
+echo "SET(CCLL CMAKE_CURRENT_LIST_LINE)" >> CMakeLists.txt
+echo "string(SUBSTRING \${CMAKE_CURRENT_SOURCE_DIR} 5 1 DRV)" >> CMakeLists.txt
+echo "string(TOLOWER \"\${DRV}\" DRV)" >> CMakeLists.txt
+echo "Message(STATUS \"CWD = \${CMAKE_CURRENT_SOURCE_DIR} \")" >> CMakeLists.txt
+echo "MESSAGE(STATUS \"DRV = \${DRV}\")" >> CMakeLists.txt
+echo "cmake_minimum_required(VERSION 3.6)" >> CMakeLists.txt
+echo "set(BOARD_MANUFACTURER $BOARD_MANUFACTURER)" >> CMakeLists.txt
+echo "set(BOARD_TYPE $BOARD_TYPE)" >> CMakeLists.txt
+
+echo "set(BOARD_VARIANT $BOARD_SERIES_$BOARD_APP_$CPU_DEVICE$CPU_PINS$CPU_MEM)" >> CMakeLists.txt
+
+echo "set(SKETCH_NAME $PROJECT_NAME)" >> CMakeLists.txt
+echo "set(PRJ_NAME $PROJECT_NAME)" >> CMakeLists.txt
+echo "set(MCU_FAMILY $MCU_FAMILY)" >> CMakeLists.txt
+echo "set(MCU_FAMILY_LC stm32f4xx)" >> CMakeLists.txt
+echo "set(MCU_LINE $MCU_LINE)" >> CMakeLists.txt
+echo "set(EICON_BOARD $PROJECT_NAME)" >> CMakeLists.txt
+echo "set(MCU_LINKER_SCRIPT /mnt/\${DRV}/Arduino/hardware/$BOARD_MANUFACTURER/stm32/variants/$PROJECT_NAME/ldscript.ld)" >> CMakeLists.txt
+echo "set(ARDUINO_VERSION 10809)" >> CMakeLists.txt
+echo "#return()" >> CMakeLists.txt
+echo "include("CMake/Message-1.cmake")" >> CMakeLists.txt
+echo "include("CMake/STM32Toolchain.cmake")" >> CMakeLists.txt
+echo "include("CMake/ArduinoStm32Lib.cmake")" >> CMakeLists.txt
+echo "include("CMake/Message-2.cmake")" >> CMakeLists.txt
+
+echo "project(\${PRJ_NAME} C CXX ASM)" >> CMakeLists.txt
+echo "add_library(arduinolib \${ARDUINOLIB_SOURCES})" >> CMakeLists.txt
+echo "add_executable(\${PRJ_NAME}.elf \${SKETCH_CPP_SOURCES})" >> CMakeLists.txt
+echo "target_link_libraries(\${PRJ_NAME}.elf arduinolib)" >> CMakeLists.txt 
+echo "set(CMAKE_EXE_LINKER_FLAGS "-Wl,-Map=\${PROJECT_SOURCE_DIR}/build/\${PRJ_NAME}.map")" >> CMakeLists.txt
+echo "set(HEX_FILE \${PROJECT_SOURCE_DIR}/build/\${PRJ_NAME}.hex)" >> CMakeLists.txt
+echo "set(BIN_FILE \${PROJECT_SOURCE_DIR}/build/\${PRJ_NAME}.bin)" >> CMakeLists.txt
+
+echo "include("CMake/Message-3.cmake")" >> CMakeLists.txt
+
+echo "add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD" >> CMakeLists.txt
+echo "        COMMAND \${CMAKE_OBJCOPY} ARGS -Oihex \$<TARGET_FILE:\${PRJ_NAME}.elf> \${HEX_FILE}" >> CMakeLists.txt
+echo "        COMMAND \${CMAKE_OBJCOPY} ARGS -Obinary \$<TARGET_FILE:\${PRJ_NAME}.elf> \${BIN_FILE}" >> CMakeLists.txt
+echo "COMMENT "Building \${HEX_FILE} \nBuilding \${BIN_FILE}")" >> CMakeLists.txt
+
+echo "include("CMake/Message-4.cmake")" >> CMakeLists.txt
+
+echo "CMakeLists.txt created"
+cat CMakeLists.txt
+exit
+echo "Creating Github repofor $PROJECT_NAME"
+exit
+curl -u "$GITHUB_USER_NAME" https://api.github.com/orgs/$GITHUB_ORGS_NAME/repos `{"name" : "$PROJECT_NAME"}`
+
+#ln -s $PWD/../arduino-cmake-stm32/cmake cmake
+#mkdir build
+#cd build
+#cmake -DPLATFORM_PATH=$PWD/../../STM32Duino/arduino  -DPLATFORM_TOOLCHAIN_PATH=$TOOLCHAIN ..
+echo "all done"
