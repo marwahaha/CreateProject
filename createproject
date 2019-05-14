@@ -51,8 +51,8 @@ echo "CPU_MEM = $CPU_MEM"
 echo "Creating $PROJECT_NAME project"
 git init
 
-wget https://github.com/eiconDinRDuino/CMakeArduino-F427ZI/raw/master/project-templ.tar.bz2
-tar -xvjf project-templ.tar.bz2
+wget https://github.com/eiconDinRDuino/BlinkTempl/raw/master/BlinkTempl.tar.bz2
+tar -xvjf BlinkTempl.tar.bz2
 mv 
 echo "Create CMakeLists.txt"
 #exit
@@ -103,7 +103,7 @@ echo "COMMENT "Building \${HEX_FILE} \nBuilding \${BIN_FILE}")" >> CMakeLists.tx
 echo "include("CMake/Message-4.cmake")" >> CMakeLists.txt
 
 echo "CMakeLists.txt created"
-cat CMakeLists.txt
+#cat CMakeLists.txt
 exit
 echo "Creating Github repofor $PROJECT_NAME"
 exit
@@ -114,3 +114,4 @@ curl -u "$GITHUB_USER_NAME" https://api.github.com/orgs/$GITHUB_ORGS_NAME/repos 
 #cd build
 #cmake -DPLATFORM_PATH=$PWD/../../STM32Duino/arduino  -DPLATFORM_TOOLCHAIN_PATH=$TOOLCHAIN ..
 echo "all done"
+
