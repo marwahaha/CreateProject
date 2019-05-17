@@ -8,56 +8,83 @@
 #    "F427ZI"               = Abreviated name of the Stm32 CPU the full name being STM32F427ZIT6
 #    "STM32F427ZIT6"        = IC MCU 32BIT 2MB FLASH 144LQF
 #    "STM32F427ZIT6"        = STM32 = ST Micro, F = Device, 427 = series, Z = 144 Pins, I = 2048 KB Mem, T = LQFP, 6 = Temp = -40 to 85*C.
-
+echo "-------------------------------------------------------------------------------------------------"
 GITHUB_USER_NAME=noeldiviney
 GITHUB_ORGS_NAME=eiconDinRDuino
 PROJECT_NAME=$2
-echo "PROJECT_NAME = $PROJECT_NAME"
 BOARD_MANUFACTURER=$1
-echo "BOARD_MANUFACTURER = $BOARD_MANUFACTURER"
 BOARD_SERIES="$(cut -d'_' -f1 <<<"$PROJECT_NAME")"
-echo "BOARD_SERIES = $BOARD_SERIES"
 BOARD_APP="$(cut -d'_' -f2 <<<"$PROJECT_NAME")"
-echo "BOARD_APP = $BOARD_APP"
 CPU_TYPE="$(cut -d'_' -f3 <<<"$PROJECT_NAME")"
-echo "CPU_TYPE = $CPU_TYPE"
 CPU_DEVICE=${CPU_TYPE:0:4}
-echo "CPU_DEVICE = $CPU_DEVICE"
 CPU_FAMILY=${CPU_TYPE:0:2}
-echo "CPU_FAMILY = $CPU_FAMILY"
 CPU_PINS=${CPU_TYPE:4:1}
-echo "CPU_PINS = $CPU_PINS"
 CPU_MEM=${CPU_TYPE:5:1}
-echo "CPU_MEM = $CPU_MEM"
+X=x
 XX=xx
-echo "XX = $XX"
-BOARD_TYPE=STM32$CPU_DEVICE$XX
-echo "BOARD_TYPE = $BOARD_TYPE"
-MCU_FAMILY=STM32$CPU_DEVICE$XX
-echo "MCU_FAMILY = $MCU_FAMILY"
+if [ "$CPU_MEM" = "B" ]; then
+	BOARD_TYPE=STM32$CPU_DEVICE$X$CPU_MEM
+else
+	BOARD_TYPE=STM32$CPU_DEVICE$XX
+fi
+MCU_FAMILY=STM32$CPU_FAMILY$XX
 MCU_LINE=STM32$CPU_DEVICE$XX
-echo "MCU_LINE = $MCU_LINE"
-echo "Starting test script"
-mkdir $PROJECT_NAME
-cd $PROJECT_NAME
-echo "GITHUB_USER_NAME = $GITHUB_USER_NAME"
-echo "GITHUB_ORGS_NAME = $GITHUB_ORGS_NAME"
-echo "PROJECT_NAME = $PROJECT_NAME"
-echo "BOARD_MANUFACTURER = $BOARD_MANUFACTURER"
-echo "BOARD_SERIES = $BOARD_SERIES"
-echo "CPU_DEVICE = $CPU_DEVICE"
-echo "CPU_PINS = $CPU_PINS"
-echo "CPU_MEM = $CPU_MEM"
-echo "Creating $PROJECT_NAME project"
-git init
 
-wget https://github.com/eiconDinRDuino/BlinkTempl/raw/master/BlinkTempl.tar.bz2
-tar -xvjf BlinkTempl.tar.bz2
-mv 
-echo "Create CMakeLists.txt"
+echo "createproject    line $LINENO  GITHUB_USER_NAME            = $GITHUB_USER_NAME"   
+echo "createproject    line $LINENO  GITHUB_ORGS_NAME            = $GITHUB_ORGS_NAME"
+echo "createproject    line $LINENO  PROJECT_NAME                = $PROJECT_NAME"
+echo "createproject    line $LINENO  BOARD_MANUFACTURER          = $BOARD_MANUFACTURER"
+echo "createproject    line $LINENO  BOARD_SERIES                = $BOARD_SERIES"
+echo "createproject    line $LINENO  BOARD_APP                   = $BOARD_APP"
+echo "createproject    line $LINENO  CPU_TYPE                    = $CPU_TYPE"
+echo "createproject    line $LINENO  CPU_DEVICE                  = $CPU_DEVICE"
+echo "createproject    line $LINENO  CPU_FAMILY                  = $CPU_FAMILY"
+echo "createproject    line $LINENO  CPU_PINS                    = $CPU_PINS"
+echo "createproject    line $LINENO  CPU_MEM                     = $CPU_MEM"
+echo "createproject    line $LINENO  X                           = $X"
+echo "createproject    line $LINENO  XX                          = $XX"
+echo "createproject    line $LINENO  BOARD_TYPE                  = $BOARD_TYPE"
+echo "createproject    line $LINENO  MCU_FAMILY                  = $MCU_FAMILY"
+echo "createproject    line $LINENO  MCU_LINE                    = $MCU_LINE"
+echo "-------------------------------------------------------------------------------------------------"
+echo "createproject    line $LINENO  Creating local Git Repo for   $PROJECT_NAME"
+echo ""
+echo "createproject    line $LINENO  mkdir                         $PROJECT_NAME"
+echo "createproject    line $LINENO  cd                            $PROJECT_NAME"
+echo "createproject    line $LINENO  PWD                         = $PWD"
+echo "createproject    line $LINENO  Downloading Template          wget https://github.com/eiconDinRDuino/BlinkTempl/raw/master/BlinkTempl.tar.bz2"
+echo ""
+echo "createproject    line $LINENO  wget download info"
+echo "-------------------------------------------------------------------------------------------------"
+mkdir -p $PROJECT_NAME
+cd $PROJECT_NAME
+wget https://github.com/eiconDinRDuino/ProjectTempl/raw/master/project.tar.bz2
+
+echo "-------------------------------------------------------------------------------------------------"
+echo "createproject    line $LINENO  Extracting the tarball        tar -xvjf project.tar.bz2"
+tar -xvjf project.tar.bz2
+mv project.cpp $PROJECT_NAME.cpp
+mv project.ino $PROJECT_NAME.ino
+sed -i 's/app/Blink/g' $PROJECT_NAME.cpp
+mv app.cpp $BOARD_APP.cpp
+mv app.h $BOARD_APP.h
+sed -i 's/app/Blink/g' $BOARD_APP.cpp
+sed -i 's/app/Blink/g' $BOARD_APP.h
+declare -u BOARD_APP_UC
+BOARD_APP_UC=$BOARD_APP
+sed -i "s/APP/$BOARD_APP_UC/g" $BOARD_APP.h
+
+
+echo "createproject    line $LINENO  Renaming project.cpp            mv project.cpp $PROJECT_NAME.cpp"
+echo "createproject    line $LINENO  Renaming project.ino            mv ptoject.ino $PROJECT_NAME.ino"
+echo "createproject    line $LINENO  Renaming app.cpp                mv app.cpp $BOARD_APP.cpp"
+echo "createproject    line $LINENO  Renaming app.h                  mv app.h $BOARD_APP.h"
+echo "createproject    line $LINENO  Edit using sed                  $PROJECT_NAME.cpp $BOARD_APP.cpp $BOARD_APP.h"
+#exit
+echo "-------------------------------------------------------------------------------------------------"
+echo "createproject    line $LINENO  Creating                      CMakeLists.txt"
 #exit
 
-#cat <<'EOF' > CMakeLists.txt
 touch CMakeLists.txt
 
 echo "SET(CCLL CMAKE_CURRENT_LIST_LINE)" >> CMakeLists.txt
@@ -98,20 +125,35 @@ echo "include("CMake/Message-3.cmake")" >> CMakeLists.txt
 echo "add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD" >> CMakeLists.txt
 echo "        COMMAND \${CMAKE_OBJCOPY} ARGS -Oihex \$<TARGET_FILE:\${PRJ_NAME}.elf> \${HEX_FILE}" >> CMakeLists.txt
 echo "        COMMAND \${CMAKE_OBJCOPY} ARGS -Obinary \$<TARGET_FILE:\${PRJ_NAME}.elf> \${BIN_FILE}" >> CMakeLists.txt
-echo "COMMENT "Building \${HEX_FILE} \nBuilding \${BIN_FILE}")" >> CMakeLists.txt
-
+echo "COMMENT \"Building \${HEX_FILE} \\nBuilding \${BIN_FILE}\")" >> CMakeLists.txt
 echo "include("CMake/Message-4.cmake")" >> CMakeLists.txt
 
 echo "CMakeLists.txt created"
-#cat CMakeLists.txt
-exit
-echo "Creating Github repofor $PROJECT_NAME"
-exit
-curl -u "$GITHUB_USER_NAME" https://api.github.com/orgs/$GITHUB_ORGS_NAME/repos `{"name" : "$PROJECT_NAME"}`
+echo ""
+echo "-------------------------------------------------------------------------------------------------"
+echo ""
+echo "Creating Github repo for USER $GITHUB_USER_NAME in ORGS $GITHUB_ORGS_NAME and PROJECT_NAME = $PROJECT_NAME"
+mkdir build
+git init
+#curl -u "$GITHUB_USER_NAME" https://api.github.com/orgs/$GITHUB_ORGS_NAME/repos `{"name" : "$PROJECT_NAME"}`
+echo "cmd = curl -u \"$GITHUB_USER_NAME\" https://api.github.com/orgs/$GITHUB_ORGS_NAME/repos -d "{\"name\":\"${PROJECT_NAME}\"}""
+curl -u "$GITHUB_USER_NAME" https://api.github.com/orgs/$GITHUB_ORGS_NAME/repos -d "{\"name\":\"${PROJECT_NAME}\"}"
 
-#ln -s $PWD/../arduino-cmake-stm32/cmake cmake
-#mkdir build
-#cd build
-#cmake -DPLATFORM_PATH=$PWD/../../STM32Duino/arduino  -DPLATFORM_TOOLCHAIN_PATH=$TOOLCHAIN ..
+#exit
+git add build CMake/ CMakeLists.txt ${PROJECT_NAME}.cpp ${PROJECT_NAME}.ino README.adoc
+git commit -m "initial commit"
+git remote add origin https://github.com/eiconDinRDuino/${PROJECT_NAME}.git
+git push -u origin master
+
+echo"\n"
+echo "Doing a CMake Build"
+echo "PWD = $PWD"
+echo "cd $PROJECT_NAME/build"
+cd build
+
+echo "rm -rf * && cmake -G "Unix Makefiles" .."
+rm -rf * && cmake -G "Unix Makefiles" ..
+echo "Executing make"
+make
 echo "all done"
 
