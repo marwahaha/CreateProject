@@ -63,13 +63,13 @@ wget https://github.com/eiconDinRDuino/ProjectTempl/raw/master/project.tar.bz2
 echo "-------------------------------------------------------------------------------------------------"
 echo "createproject    line $LINENO  Extracting the tarball        tar -xvjf project.tar.bz2"
 tar -xvjf project.tar.bz2
+sed -i 's/app/Blink/g' project.cpp
+sed -i 's/app/Blink/g' app.cpp
+sed -i 's/app/Blink/g' app.h
 mv project.cpp $PROJECT_NAME.cpp
 mv project.ino $PROJECT_NAME.ino
-sed -i 's/app/Blink/g' $PROJECT_NAME.cpp
 mv app.cpp $BOARD_APP.cpp
 mv app.h $BOARD_APP.h
-sed -i 's/app/Blink/g' $BOARD_APP.cpp
-sed -i 's/app/Blink/g' $BOARD_APP.h
 declare -u BOARD_APP_UC
 BOARD_APP_UC=$BOARD_APP
 sed -i "s/APP/$BOARD_APP_UC/g" $BOARD_APP.h
@@ -84,9 +84,12 @@ echo "createproject    line $LINENO  Edit using sed                  $PROJECT_NA
 echo "-------------------------------------------------------------------------------------------------"
 echo "createproject    line $LINENO  Creating                      CMakeLists.txt"
 #exit
-
-touch CMakeLists.txt
-
+if [ -f CMakeLists.txt ]; then
+   rm -rf CMakeLists.txt
+   touch CMakeLists.txt
+else
+   touch CMakeLists.txt
+fi 
 echo "SET(CCLL CMAKE_CURRENT_LIST_LINE)" >> CMakeLists.txt
 echo "string(SUBSTRING \${CMAKE_CURRENT_SOURCE_DIR} 5 1 DRV)" >> CMakeLists.txt
 echo "string(TOLOWER \"\${DRV}\" DRV)" >> CMakeLists.txt
@@ -127,7 +130,7 @@ echo "        COMMAND \${CMAKE_OBJCOPY} ARGS -Oihex \$<TARGET_FILE:\${PRJ_NAME}.
 echo "        COMMAND \${CMAKE_OBJCOPY} ARGS -Obinary \$<TARGET_FILE:\${PRJ_NAME}.elf> \${BIN_FILE}" >> CMakeLists.txt
 echo "COMMENT \"Building \${HEX_FILE} \\nBuilding \${BIN_FILE}\")" >> CMakeLists.txt
 echo "include("CMake/Message-4.cmake")" >> CMakeLists.txt
-
+echo "MESSAGE(STATUS "End of CMakeLists.txt")" >> CMakeLists.txt
 echo "CMakeLists.txt created"
 echo ""
 echo "-------------------------------------------------------------------------------------------------"
