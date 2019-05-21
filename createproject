@@ -125,7 +125,7 @@ echo "set(BIN_FILE \${PROJECT_SOURCE_DIR}/build/\${PRJ_NAME}.bin)" >> CMakeLists
 
 echo "include("CMake/Message-3.cmake")" >> CMakeLists.txt
 
-echo "add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD" >> CMakeLists.txt
+echo "add_custom_command(TARGET ${PRJ_NAME}.elf POST_BUILD" >> CMakeLists.txt
 echo "        COMMAND \${CMAKE_OBJCOPY} ARGS -Oihex \$<TARGET_FILE:\${PRJ_NAME}.elf> \${HEX_FILE}" >> CMakeLists.txt
 echo "        COMMAND \${CMAKE_OBJCOPY} ARGS -Obinary \$<TARGET_FILE:\${PRJ_NAME}.elf> \${BIN_FILE}" >> CMakeLists.txt
 echo "COMMENT \"Building \${HEX_FILE} \\nBuilding \${BIN_FILE}\")" >> CMakeLists.txt
