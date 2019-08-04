@@ -11,7 +11,7 @@ Eicon Project Creation Template
 #    "CreateProject"        = Name of the Command
 #    "Eicon"                = Name of the Board Manufacturer
 #    "DRD_Silo8"            = Name of the DinRDuino board series
-#    "F427ZI"               = Abreviated name of the Stm32 CPU the full name being STM32F427ZIT6
+#    "F427ZI"               = Abbreviated name of the Stm32 CPU the full name being STM32F427ZIT6
 #    "STM32F427ZIT6"        = IC MCU 32BIT 2MB FLASH 144LQF
 #    "STM32F427ZIT6"        = STM32 = ST Micro, F = Device, 427 = series, Z = 144 Pins, I = 2048 KB Mem, T = LQFP, 6 = Temp = -40 to 85*C.
 ....
